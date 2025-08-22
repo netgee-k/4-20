@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 2px solid #00ff41;
+            margin-bottom: 2rem;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .nav a {
+            color: #00ff41;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+        }
+        .nav a:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+        .content {
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-top: 1px solid #00ff41;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕶️ {{ SITE_NAME }}</h1>
+            <p>Anonymous • Secure • Bitcoin Only</p>
+        </div>
+
+        <div class="nav">
+            <a href="/">Home</a>
+            <a href="/about/">About</a>
+            <a href="/admin/">Admin</a>
+        </div>
+
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <div class="footer">
+            <p>Powered by Django • {{ SITE_NAME }} © 2025</p>
+            <p>BTC: {{ BITCOIN_WALLET_ADDRESS|truncatechars:20 }}</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<h2>Welcome to {{ SITE_NAME }}</h2>
+<p>Your anonymous marketplace for secure Bitcoin transactions.</p>
+
+<!-- Featured Products -->
+{% if featured_products %}
+<div style="margin: 3rem 0;">
+    <h3>🔥 Featured Products</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        {% for product in featured_products %}
+        <div style="background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px; padding: 1.5rem; transition: all 0.3s ease;">
+            <h4>{{ product.name }}</h4>
+            <p style="color: #ccc; margin: 1rem 0;">{{ product.description|truncatewords:20 }}</p>
+            <p style="color: #ffd700; font-weight: bold; font-size: 1.2rem;">
+                💰 {{ product.price_btc }} BTC
+            </p>
+            <a href="{% url 'product_detail' product.id %}" 
+               style="display: inline-block; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 1rem;">
+                View Product
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'product_list' %}" 
+           style="background: linear-gradient(135deg, #333, #666); color: #fff; padding: 1rem 2rem; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            View All Products →
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Features -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 3rem 0;">
+    <div style="padding: 2rem; border: 2px solid #00ff41; border-radius: 10px; text-align: center;">
+        <h4>🛡️ Anonymous</h4>
+        <p>No signups required. Complete privacy for all transactions.</p>
+    </div>
+    <div style="padding: 2rem; border: 2px solid #00ff41; border-radius: 10px; text-align: center;">
+        <h4>₿ Bitcoin Only</h4>
+        <p>Bitcoin payments for maximum anonymity and security.</p>
+    </div>
+    <div style="padding: 2rem; border: 2px solid #00ff41; border-radius: 10px; text-align: center;">
+        <h4>🔥 Secure</h4>
+        <p>Encrypted communications and secure transactions.</p>
+    </div>
+</div>
+
+<!-- How it Works -->
+<div style="background: rgba(0, 255, 65, 0.1); border: 2px solid #00ff41; border-radius: 10px; padding: 2rem; margin: 3rem 0;">
+    <h3>🚀 How It Works</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        <div>
+            <h4>1. Browse Products</h4>
+            <p>Explore our anonymous marketplace</p>
+        </div>
+        <div>
+            <h4>2. Pay with Bitcoin</h4>
+            <p>Send BTC to the provided address</p>
+        </div>
+        <div>
+            <h4>3. Receive Goods</h4>
+            <p>Get your digital products instantly</p>
+        </div>
+        <div>
+            <h4>4. Stay Anonymous</h4>
+            <p>No personal information required</p>
+        </div>
+    </div>
+</div>
+
+<!-- Bitcoin Info -->
+<div style="text-align: center; margin: 3rem 0; padding: 2rem; border: 2px solid #ffd700; border-radius: 10px;">
+    <h3>₿ Bitcoin Payments</h3>
+    <p>We accept Bitcoin only for maximum privacy and security.</p>
+    <p style="font-family: monospace; background: rgba(255, 215, 0, 0.1); padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+        {{ BITCOIN_WALLET_ADDRESS|default:"bc1qexampleaddress" }}
+    </p>
+    <p><small>Current commission rate: {{ COMMISSION_RATE }}%</small></p>
+</div>
+{% endblock %}

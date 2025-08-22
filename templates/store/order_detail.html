@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Order {{ order.order_id }} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h2>Order #{{ order.order_id }}</h2>
+        <p style="color: #ffd700; font-size: 1.3rem; font-weight: bold;">
+            {{ order.amount_btc }} BTC
+        </p>
+    </div>
+
+    <div style="background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px; padding: 2rem;">
+        <!-- Order Status -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h3>Status: 
+                <span style="color: 
+                    {% if order.status == 'paid' %}#00ff41
+                    {% elif order.status == 'pending' %}#ffd700
+                    {% else %}#ff3333
+                    {% endif %}">
+                    {{ order.status|upper }}
+                </span>
+            </h3>
+        </div>
+
+        <!-- Payment Details -->
+        <div style="margin-bottom: 2rem;">
+            <h4>₿ Payment Information</h4>
+            <div style="background: rgba(0, 255, 65, 0.1); padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+                <p><strong>Amount:</strong> {{ order.amount_btc }} BTC</p>
+                <p><strong>Address:</strong> 
+                    <span style="font-family: monospace; word-break: break-all;">{{ order.bitcoin_address }}</span>
+                </p>
+                {% if order.tx_hash %}
+                <p><strong>Transaction:</strong> 
+                    <span style="font-family: monospace;">{{ order.tx_hash }}</span>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div style="margin-bottom: 2rem;">
+            <h4>📦 Product</h4>
+            <p><strong>Name:</strong> {{ order.product.name }}</p>
+            <p><strong>Description:</strong> {{ order.product.description }}</p>
+        </div>
+
+        <!-- Order Meta -->
+        <div style="border-top: 1px solid #333; padding-top: 1rem;">
+            <p><strong>Created:</strong> {{ order.created_at }}</p>
+            <p><strong>Expires:</strong> {{ order.expires_at }}</p>
+            {% if order.is_expired %}
+            <p style="color: #ff3333;">⚠️ This order has expired</p>
+            {% endif %}
+        </div>
+
+        <!-- Check Status Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <button onclick="checkOrderStatus('{{ order.order_id }}')" 
+                    style="background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 1rem 2rem; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                🔄 Check Payment Status
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkOrderStatus(orderId) {
+    fetch(`/store/api/order-status/${orderId}/`)
+    .then(response => response.json())
+    .then(data => {
+        alert(`Order status: ${data.status}\nTransaction: ${data.tx_hash || 'None'}`);
+        if (data.status === 'paid') {
+            location.reload(); // Reload to show updated status
+        }
+    })
+    .catch(error => {
+        alert('Error checking status: ' + error);
+    });
+}
+</script>
+{% endblock %}

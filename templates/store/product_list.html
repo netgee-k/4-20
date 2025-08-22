@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Products - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<h2>🛍️ All Products</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+    {% for product in products %}
+    <div style="background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px; padding: 1.5rem; transition: all 0.3s ease;">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+             style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px; border: 1px solid #00ff41; margin-bottom: 1rem;">
+        {% else %}
+        <div style="width: 100%; height: 200px; background: #1a1a1a; border: 1px solid #00ff41; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+            🖼️ No Image
+        </div>
+        {% endif %}
+        
+        <h3>{{ product.name }}</h3>
+        <p style="color: #ccc; margin: 1rem 0;">{{ product.description }}</p>
+        <p style="color: #ffd700; font-weight: bold; font-size: 1.3rem;">
+            💰 {{ product.price_btc }} BTC
+        </p>
+        <p style="color: #666; font-size: 0.9rem;">
+            ({{ product.get_price_sats }} satoshis)
+        </p>
+        
+        <a href="{% url 'product_detail' product.id %}" 
+           style="display: inline-block; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 1rem;">
+            View Details
+        </a>
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 3rem;">
+        <h4>No products available yet</h4>
+        <p>Check back soon for new products!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
