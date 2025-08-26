@@ -9,3 +9,7 @@ def home(request):
         'featured_products': featured_products,
     }
     return render(request, 'core/home.html', context)
+
+
+def about(request):
+    return render(request, 'core/about.html')

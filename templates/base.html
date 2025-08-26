@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +21,6 @@
         .header {
             text-align: center;
             padding: 2rem 0;
-            border-bottom: 2px solid #00ff41;
             margin-bottom: 2rem;
         }
         .nav {
@@ -37,7 +37,7 @@
             border-radius: 5px;
         }
         .nav a:hover {
-            background: rgba(0, 255, 65, 0.1);
+            background: rgba(187, 114, 114, 0.1);
         }
         .content {
             padding: 2rem;
@@ -49,7 +49,7 @@
             text-align: center;
             margin-top: 2rem;
             padding: 1rem;
-            border-top: 1px solid #00ff41;
+            
         }
     </style>
 </head>
@@ -57,22 +57,23 @@
     <div class="container">
         <div class="header">
             <h1>🕶️ {{ SITE_NAME }}</h1>
-            <p>Anonymous • Secure • Bitcoin Only</p>
+            <p>Anonymous • Secure • Crypto Only</p>
         </div>
-
         <div class="nav">
             <a href="/">Home</a>
-            <a href="/about/">About</a>
-            <a href="/admin/">Admin</a>
-        </div>
+            <a href="/">Info</a>  
 
+      </div>
+
+
+  
         <div class="content">
             {% block content %}
             {% endblock %}
         </div>
 
         <div class="footer">
-            <p>Powered by Django • {{ SITE_NAME }} © 2025</p>
+            <p>Powered by  {{ SITE_NAME }}  © 2025</p>
             <p>BTC: {{ BITCOIN_WALLET_ADDRESS|truncatechars:20 }}</p>
         </div>
     </div>
