@@ -1,1 +1,30 @@
 db.sqlite
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# Environment
+.env
+venv/
+.env.local
+.env.prod
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Security
+*.key
+*.pem
+secrets/

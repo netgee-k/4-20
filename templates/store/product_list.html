@@ -3,7 +3,7 @@
 {% block title %}Products - {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<h2>🛍️ All Products</h2>
+<h2>🛍️ Available Products</h2>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
     {% for product in products %}
@@ -26,10 +26,21 @@
             ({{ product.get_price_sats }} satoshis)
         </p>
         
-        <a href="{% url 'product_detail' product.id %}" 
-           style="display: inline-block; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 1rem;">
-            View Details
-        </a>
+        {% if product.requires_age_verification %}
+        <p style="color: #ff6666; font-size: 0.9rem; margin: 0.5rem 0;">
+            🔞 Age {{ product.min_age }}+ verification required
+        </p>
+        {% endif %}
+        
+        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <input type="number" id="quantity-{{ product.id }}" value="1" min="1" max="{{ product.max_per_order }}" 
+                   style="width: 60px; padding: 0.5rem; background: #1a1a1a; border: 1px solid #00ff41; border-radius: 3px; color: #00ff41;">
+            
+            <button onclick="addToCart({{ product.id }})" 
+                    style="flex: 1; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 0.5rem 1rem; border: none; border-radius: 3px; font-weight: bold; cursor: pointer;">
+                Add to Cart
+            </button>
+        </div>
     </div>
     {% empty %}
     <div style="text-align: center; padding: 3rem;">
@@ -38,4 +49,34 @@
     </div>
     {% endfor %}
 </div>
+
+<script>
+function addToCart(productId) {
+    const quantity = document.getElementById('quantity-' + productId).value;
+    
+    fetch('/store/api/add-to-cart/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ 
+            product_id: productId, 
+            quantity: parseInt(quantity) 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count
+            document.getElementById('cart-count').textContent = data.cart_count;
+            
+            // Show success message
+            alert('Added to cart! Total: ' + data.cart_total + ' BTC');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+</script>
 {% endblock %}

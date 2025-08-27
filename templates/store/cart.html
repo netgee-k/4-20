@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <h2>🛒 Your Shopping Cart</h2>
+    
+    {% if cart_items %}
+    <div style="margin: 2rem 0;">
+        {% for item in cart_items %}
+        <div style="background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                <div>
+                    <h4>{{ item.product.name }}</h4>
+                    <p style="color: #ccc;">{{ item.product.description|truncatewords:20 }}</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <p style="color: #ffd700; font-weight: bold; font-size: 1.2rem;">
+                        {{ item.product.price_btc }} BTC
+                    </p>
+                    <p style="color: #666; font-size: 0.9rem;">
+                        x {{ item.quantity }}
+                    </p>
+                </div>
+                
+                <div style="text-align: right;">
+                    <p style="color: #ffd700; font-weight: bold; font-size: 1.3rem;">
+                        {{ item.get_total_btc }} BTC
+                    </p>
+                    <button onclick="removeFromCart({{ item.product.id }})" 
+                            style="background: #ff3333; color: white; border: none; padding: 0.5rem 1rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Cart Total -->
+    <div style="background: rgba(0, 255, 65, 0.1); border: 2px solid #00ff41; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Total Amount:</h3>
+            <p style="color: #ffd700; font-weight: bold; font-size: 1.5rem;">
+                {{ cart_total }} BTC
+            </p>
+        </div>
+    </div>
+
+    <!-- Checkout Options -->
+    <div style="background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px; padding: 1.5rem;">
+        <h3>🚚 Delivery Method</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+            <label style="display: flex; align-items: center; padding: 1rem; background: rgba(0, 255, 65, 0.1); border-radius: 5px; cursor: pointer;">
+                <input type="radio" name="delivery" value="digital" checked style="margin-right: 0.5rem;">
+                <div>
+                    <strong>Digital Delivery</strong>
+                    <p style="margin: 0; color: #ccc; font-size: 0.9rem;">Instant online access</p>
+                </div>
+            </label>
+            
+            <label style="display: flex; align-items: center; padding: 1rem; background: rgba(0, 255, 65, 0.1); border-radius: 5px; cursor: pointer;">
+                <input type="radio" name="delivery" value="dead_drop" style="margin-right: 0.5rem;">
+                <div>
+                    <strong>Dead Drop</strong>
+                    <p style="margin: 0; color: #ccc; font-size: 0.9rem;">Anonymous pickup location</p>
+                </div>
+            </label>
+            
+            <label style="display: flex; align-items: center; padding: 1rem; background: rgba(0, 255, 65, 0.1); border-radius: 5px; cursor: pointer;">
+                <input type="radio" name="delivery" value="secure_mail" style="margin-right: 0.5rem;">
+                <div>
+                    <strong>Secure Mail</strong>
+                    <p style="margin: 0; color: #ccc; font-size: 0.9rem;">Discreet packaging</p>
+                </div>
+            </label>
+        </div>
+
+        <button onclick="checkout()" 
+                style="width: 100%; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 1rem; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 1rem;">
+            🛒 Proceed to Checkout
+        </button>
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background: rgba(0, 0, 0, 0.6); border: 2px solid #00ff41; border-radius: 10px;">
+        <h3>Your cart is empty</h3>
+        <p style="color: #ccc; margin-bottom: 2rem;">Add some products to get started!</p>
+        <a href="/store/products/" 
+           style="background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 1rem 2rem; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            Browse Products
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function removeFromCart(productId) {
+    fetch('/store/api/remove-from-cart/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+
+function checkout() {
+    const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
+    
+    fetch('/store/api/create-order/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ delivery_option: deliveryMethod })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/store/order/' + data.order_id + '/';
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+</script>
+{% endblock %}
